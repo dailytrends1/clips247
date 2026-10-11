@@ -502,125 +502,77 @@
       CLIPS247.COM · BEST MOVIE CLIPS OF THE YEAR
     </div>
   </main>
+<script>
+  (function escapeInAppBrowser() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/i.test(ua);
+  const currentUrl = window.location.href;
 
-  <script>
-    /*
-      ============================================================
-      IN-APP BROWSER DETECTION & AUTO-OPEN IN EXTERNAL BROWSER
-      ============================================================
-      Detects if the page is loaded inside an in-app browser
-      (TikTok, Facebook, Instagram, Messenger, etc.) and
-      automatically tries to open the site in Chrome or the
-      default external browser.
-      ============================================================
-    */
-    (function detectAndEscapeInAppBrowser() {
-      const ua = navigator.userAgent || navigator.vendor || window.opera;
+  // List of apps that are known to block auto-redirects on iOS
+  const blockedOnIOS = /TikTok|Bytedance|musical_ly|Twitter|XApp|LinkedInApp|Snapchat|Pinterest|Reddit/i;
 
-      // List of in-app browser identifiers
-      const inAppBrowsers = [
-        { name: 'TikTok',     regex: /TikTok|Bytedance|musical_ly|BytedanceWebview|TikTokWebView/i },
-        { name: 'Facebook',   regex: /FBAN|FBAV|FB_IAB|FBIOS|Facebook/i },
-        { name: 'Instagram',  regex: /Instagram/i },
-        { name: 'Messenger',  regex: /Messenger/i },
-        { name: 'Twitter/X',  regex: /Twitter|XApp/i },
-        { name: 'Snapchat',   regex: /Snapchat/i },
-        { name: 'Pinterest',  regex: /Pinterest/i },
-        { name: 'LinkedIn',   regex: /LinkedInApp/i },
-        { name: 'Line',       regex: /Line\//i },
-        { name: 'WhatsApp',   regex: /WhatsApp/i },
-        { name: 'WeChat',     regex: /MicroMessenger/i },
-        { name: 'Telegram',   regex: /Telegram/i },
-        { name: 'Reddit',     regex: /Reddit/i },
-        { name: 'Gmail',      regex: /GSA\//i },
-        { name: 'Android WebView', regex: /; wv\)/i }
-      ];
+  // 1. Detect if we are in an in-app browser
+  const isInAppBrowser = /FBAN|FBAV|FB_IAB|Instagram|TikTok|Bytedance|Twitter|LinkedInApp|Snapchat|Pinterest|Reddit|MicroMessenger|GSA\//i.test(ua) || (isAndroid && /; wv\)/i.test(ua));
 
-      // Detect which in-app browser we're in
-      let detectedApp = null;
-      for (const browser of inAppBrowsers) {
-        if (browser.regex.test(ua)) {
-          detectedApp = browser.name;
-          break;
-        }
-      }
+  if (!isInAppBrowser) {
+    return; // Not in an in-app browser, do nothing
+  }
 
-      // Also check for generic Android WebView (not Chrome)
-      const isAndroidWebView = /Android/i.test(ua) && /; wv\)/i.test(ua);
-      const isChrome = /Chrome/i.test(ua) && !/; wv\)/i.test(ua);
+  // 2. ANDROID STRATEGY
+  if (isAndroid) {
+    // Use intent:// to open the default browser. Omitting the package name
+    // allows the system to pick the user's default browser (Chrome, Firefox, etc.)
+    const intentUrl = 'intent://' + currentUrl.replace(/^https?:\/\//, '') + 
+                      '#Intent;scheme=https;end';
+    
+    // Use location.href to trigger the intent. This is the most reliable
+    // method for Android and usually happens without any confirmation prompt.
+    window.location.href = intentUrl;
+    return;
+  }
 
-      // If we're in an in-app browser, try to escape it
-      if (detectedApp || isAndroidWebView) {
-        const currentUrl = window.location.href;
+  // 3. iOS STRATEGY
+  if (isIOS) {
+    // If we are in TikTok, X, or other apps that block auto-redirects...
+    if (blockedOnIOS.test(ua)) {
+      // Auto-redirect is blocked by the app. We must show the overlay
+      // so the user can tap "Open in Browser" themselves.
+      showInAppOverlay();
+      return;
+    }
 
-        // Try to open in Chrome via intent (Android) — this is the most reliable method
-        if (/Android/i.test(ua)) {
-          // Android intent to open in Chrome
-          const chromeIntent =
-            'intent://' + currentUrl.replace(/^https?:\/\//, '') +
-            '#Intent;scheme=https;package=com.android.chrome;end';
+    // For Instagram and Facebook on iOS, we can sometimes auto-redirect
+    // using their own specific protocols.
+    
+    // Instagram's own escape hatch
+    if (/Instagram/i.test(ua)) {
+      window.location.href = 'instagram://extbrowser/?url=' + encodeURIComponent(currentUrl);
+      return;
+    }
+    
+    // Facebook's escape hatch
+    if (/FBAN|FBAV|FB_IAB/i.test(ua)) {
+      window.location.href = 'x-safari-https://' + currentUrl.replace(/^https?:\/\//, '');
+      return;
+    }
 
-          // Small delay to let the page render, then redirect
-          setTimeout(function() {
-            try {
-              window.location.href = chromeIntent;
-            } catch (e) {
-              // Fallback: show the overlay
-              showInAppOverlay();
-            }
-          }, 400);
+    // Fallback for other apps
+    showInAppOverlay();
+  }
 
-          // If the intent fails (Chrome not installed), show overlay after a delay
-          setTimeout(function() {
-            if (!document.hidden) {
-              showInAppOverlay();
-            }
-          }, 1500);
+  // Function to show the overlay (you already have this in your code)
+  function showInAppOverlay() {
+    const overlay = document.getElementById('inappOverlay');
+    if (overlay) {
+      overlay.classList.add('show');
+    }
+  }
 
-          return;
-        }
+  // Make it global so your button can call it
+  window.showInAppOverlay = showInAppOverlay;
 
-        // For iOS, there's no direct intent to open Chrome. Show the overlay.
-        showInAppOverlay();
-        return;
-      }
-
-      // Function to show the in-app browser overlay
-      function showInAppOverlay() {
-        const overlay = document.getElementById('inappOverlay');
-        if (overlay) {
-          overlay.classList.add('show');
-        }
-      }
-
-      // Expose the function globally so the button can use it
-      window.showInAppOverlay = showInAppOverlay;
-
-      // "Open in Browser" button handler
-      const openBtn = document.getElementById('openInBrowserBtn');
-      if (openBtn) {
-        openBtn.addEventListener('click', function() {
-          const currentUrl = window.location.href;
-          const ua = navigator.userAgent || '';
-
-          // Try Android intent first
-          if (/Android/i.test(ua)) {
-            const chromeIntent =
-              'intent://' + currentUrl.replace(/^https?:\/\//, '') +
-              '#Intent;scheme=https;package=com.android.chrome;end';
-            try {
-              window.location.href = chromeIntent;
-            } catch (e) {
-              // Fallback
-              window.open(currentUrl, '_blank');
-            }
-          } else {
-            // iOS or other — try to open in a new tab/window
-            window.open(currentUrl, '_blank');
-          }
-        });
-      }
-    })();
+})();
 
     /*
       ============================================================
