@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Secret Behind the Portrait · 40 Episodes</title>
+  <meta name="description" content="Uncover the mystery behind the portrait. 40 episodes. Answer a few questions to unlock all episodes.">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(ellipse at 20% 10%, rgba(150, 45, 20, 0.35), transparent 60%),
+        radial-gradient(ellipse at 80% 90%, rgba(200, 80, 20, 0.2), transparent 55%),
+        linear-gradient(145deg, #0b0b0b, #1a120f 55%, #0a0a0a);
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px 40px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      text-align: center;
+      padding: 30px 20px 30px;
+      border: 1px solid rgba(255, 145, 60, 0.25);
+      border-radius: 28px;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+
+    .movie-label {
+      display: inline-block;
+      color: #ffad55;
+      border: 1px solid rgba(255, 173, 85, 0.5);
+      border-radius: 40px;
+      padding: 7px 20px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      background: rgba(255, 120, 30, 0.08);
+    }
+
+    .movie-title {
+      font-size: clamp(32px, 7vw, 58px);
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 4px 30px rgba(255, 90, 20, 0.4);
+    }
+
+    .movie-title span {
+      color: #ff762e;
+      display: inline-block;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin: 18px auto 12px;
+      color: #c8c8c8;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    /* ===== UNLOCK SECTION ===== */
+    .unlock-section {
+      margin: 28px auto 22px;
+      padding: 28px 22px 24px;
+      max-width: 620px;
+      background: linear-gradient(160deg, #1f1612, #160f0d);
+      border: 1px solid rgba(255, 145, 60, 0.45);
+      border-radius: 22px;
+      box-shadow: 0 12px 30px rgba(200, 60, 20, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .unlock-section::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background: radial-gradient(circle at 30% 20%, rgba(255, 120, 40, 0.12), transparent 60%);
+      pointer-events: none;
+    }
+
+    .unlock-title {
+      font-size: clamp(20px, 4vw, 27px);
+      font-weight: 800;
+      color: #ffb273;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .unlock-text {
+      color: #d0c0b8;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      max-width: 480px;
+      margin: 0 auto 22px;
+    }
+
+    .start-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: linear-gradient(95deg, #e03a1c, #ff7a2e);
+      border: none;
+      border-radius: 60px;
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 18px 44px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 8px 26px rgba(230, 70, 25, 0.55), 0 0 0 1px rgba(255, 160, 90, 0.3);
+      transition: transform 0.15s, filter 0.2s, box-shadow 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .start-btn:hover {
+      filter: brightness(1.15);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 14px 34px rgba(255, 90, 30, 0.7), 0 0 0 1px rgba(255, 190, 120, 0.5);
+    }
+
+    .start-btn:active {
+      transform: translateY(-1px) scale(0.99);
+    }
+
+    .start-btn .arrow {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .unlock-hint {
+      margin-top: 16px;
+      color: #9a8478;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    /* ===== END UNLOCK SECTION ===== */
+
+    .episode-count {
+      display: inline-block;
+      margin: 8px 0 20px;
+      padding: 10px 24px;
+      border-radius: 50px;
+      background: #1e1411;
+      border: 1px solid #5c2f1c;
+      color: #ffb87a;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .episode-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 18px 12px;
+      margin: 20px 0 15px;
+      padding: 5px;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+
+    .episode-grid.locked {
+      opacity: 0.35;
+      pointer-events: none;
+      filter: grayscale(0.4);
+    }
+
+    .episode-card {
+      background: linear-gradient(150deg, #1c1512, #121010);
+      border-radius: 18px;
+      padding: 16px 6px 14px;
+      border: 1px solid #3a2820;
+      transition: transform 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .episode-card:hover {
+      border-color: #b85a28;
+      transform: translateY(-4px);
+      box-shadow: 0 14px 22px rgba(220, 80, 20, 0.2);
+    }
+
+    .episode-number {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #bdaaa0;
+      letter-spacing: 1px;
+      background: #2c1d16;
+      padding: 4px 12px;
+      border-radius: 30px;
+      display: inline-block;
+    }
+
+    .play-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #c4321c, #e65e1e);
+      border: none;
+      border-radius: 60px;
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 12px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.15s, box-shadow 0.2s;
+      letter-spacing: 0.8px;
+      box-shadow: 0 4px 12px rgba(220, 70, 20, 0.35);
+      border: 1px solid #ff8e4d;
+    }
+
+    .play-btn:hover {
+      filter: brightness(1.2);
+      transform: scale(1.02);
+      box-shadow: 0 6px 18px rgba(255, 90, 20, 0.6);
+    }
+
+    .play-btn:active {
+      transform: scale(0.98);
+    }
+
+    .play-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .status-message {
+      display: none;
+      margin: 24px auto 10px;
+      padding: 14px 18px;
+      max-width: 500px;
+      border-radius: 60px;
+      background: #221812;
+      color: #ffb16f;
+      font-weight: 500;
+      border: 1px solid #a1502b;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .status-message.show {
+      display: block;
+    }
+
+    .fine-print {
+      margin-top: 28px;
+      color: #8a7a72;
+      font-size: 12px;
+      line-height: 1.7;
+      border-top: 1px solid #2b1f1a;
+      padding-top: 22px;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #5f4e46;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #ffad55;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px 12px;
+      }
+
+      .episode-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px 10px;
+      }
+
+      .play-btn {
+        font-size: 0.8rem;
+        padding: 10px 4px;
+      }
+
+      .episode-number {
+        font-size: 0.75rem;
+      }
+
+      .start-btn {
+        font-size: 1rem;
+        padding: 16px 28px;
+        width: 100%;
+      }
+
+      .unlock-section {
+        padding: 22px 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <div class="movie-label">🔮 A MYSTERY YOU WON'T FORGET</div>
+
+    <h1 class="movie-title">
+      THE SECRET<br>
+      BEHIND THE <span>PORTRAIT</span>
+    </h1>
+
+    <p class="subtitle">
+      Everyone thought it was just an ordinary portrait... until a child uncovered a shocking secret. 
+      The truth may change everything.
+    </p>
+
+    <!-- ===== UNLOCK / START NOW SECTION ===== -->
+    <div class="unlock-section">
+      <h2 class="unlock-title">🔓 Unlock All 40 Episodes</h2>
+      <p class="unlock-text">
+        Answer a few simple questions about yourself to unlock every episode instantly.
+        It only takes a moment — then you'll have full access to the complete mystery.
+      </p>
+      <button
+        type="button"
+        class="start-btn"
+        id="startNowBtn"
+        aria-label="Start now to unlock all episodes"
+      >
+        START NOW <span class="arrow">→</span>
+      </button>
+      <p class="unlock-hint">✓ Takes less than a minute · Unlock instantly</p>
+    </div>
+    <!-- ===== END UNLOCK SECTION ===== -->
+
+    <div class="episode-count">
+      🎬 40 EPISODES · CLICK ANY PLAY BUTTON
+    </div>
+
+    <!-- Grid container for 40 episodes -->
+    <div class="episode-grid" id="episodeGrid"></div>
+
+    <!-- Status message -->
+    <p class="status-message" id="statusMessage" aria-live="polite">
+      Your selection has been received. Redirecting you to the next page...
+    </p>
+
+    <p class="fine-print">
+      By clicking any play button you'll proceed to the linked partner page.
+      Please review that page before continuing.
+    </p>
+
+    <div class="footer">
+      THE SECRET BEHIND THE PORTRAIT · ALL 40 EPISODES
+    </div>
+  </main>
+
+  <script>
+    /*
+      ============================================================
+      OFFER LINK CONFIGURATION
+      ============================================================
+      Base offer URL with placeholders for tracking parameters.
+      - {SOURCE_ID} will be replaced with the button source (e.g., start_now, ep_1)
+      - {CLICK_ID} will be replaced with a unique click ID for tracking
+      ============================================================
+    */
+    const OFFER_BASE_URL = "https://ldl1.com/link?z=11892232&var={SOURCE_ID}&ymid={CLICK_ID}";
+
+    /*
+      Generate a unique click ID for tracking purposes.
+      Uses timestamp + random string for uniqueness.
+    */
+    function generateClickId() {
+      const timestamp = Date.now().toString(36);
+      const randomPart = Math.random().toString(36).substring(2, 10);
+      return `${timestamp}-${randomPart}`;
+    }
+
+    /*
+      Build the final offer URL by replacing placeholders.
+      @param {string} sourceId - Identifier for the button clicked (e.g., "start_now", "ep_1")
+      @returns {string} The complete offer URL with tracking parameters.
+    */
+    function buildOfferUrl(sourceId) {
+      const clickId = generateClickId();
+      return OFFER_BASE_URL
+        .replace("{SOURCE_ID}", encodeURIComponent(sourceId))
+        .replace("{CLICK_ID}", encodeURIComponent(clickId));
+    }
+
+    // Build 40 episode cards with play buttons
+    (function generateEpisodes() {
+      const grid = document.getElementById('episodeGrid');
+
+      for (let i = 1; i <= 40; i++) {
+        const card = document.createElement('div');
+        card.className = 'episode-card';
+
+        const epNum = document.createElement('span');
+        epNum.className = 'episode-number';
+        epNum.textContent = `EP ${i}`;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'play-btn';
+        btn.setAttribute('aria-label', `Play episode ${i}`);
+        btn.innerHTML = `<span class="play-icon">▶</span> PLAY`;
+
+        // Use a closure to capture the current episode number
+        btn.addEventListener('click', (function(episode) {
+          return function() {
+            handlePlay(episode);
+          };
+        })(i));
+
+        card.appendChild(epNum);
+        card.appendChild(btn);
+        grid.appendChild(card);
+      }
+    })();
+
+    // ===== START NOW BUTTON HANDLER =====
+    document.getElementById('startNowBtn').addEventListener('click', function() {
+      const status = document.getElementById('statusMessage');
+      const startBtn = document.getElementById('startNowBtn');
+      const allButtons = document.querySelectorAll('.play-btn');
+
+      // Disable everything while redirecting
+      startBtn.disabled = true;
+      startBtn.style.opacity = '0.7';
+      startBtn.style.cursor = 'not-allowed';
+      startBtn.innerHTML = 'UNLOCKING...';
+
+      allButtons.forEach(function(btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+      });
+
+      // Show status message
+      status.textContent = '🔓 Unlocking all episodes. Redirecting you to the next page...';
+      status.classList.add('show');
+
+      // Build the offer URL with source "start_now"
+      const offerUrl = buildOfferUrl('start_now');
+
+      // Redirect to the offer link
+      window.location.href = offerUrl;
+    });
+
+    // Global function to handle play button clicks
+    function handlePlay(episodeNumber) {
+      const status = document.getElementById('statusMessage');
+      const allButtons = document.querySelectorAll('.play-btn');
+
+      // Disable all play buttons to prevent multiple clicks
+      allButtons.forEach(function(btn) {
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        btn.style.cursor = 'not-allowed';
+        btn.style.transform = 'none';
+      });
+
+      // Update status message
+      status.textContent = `▶ Episode ${episodeNumber} selected. Redirecting you to the next page...`;
+      status.classList.add('show');
+
+      // Build the offer URL with a unique source ID for this episode
+      const offerUrl = buildOfferUrl(`ep_${episodeNumber}`);
+
+      // Redirect to the offer link
+      window.location.href = offerUrl;
+    }
+
+    // Re-enable buttons if user returns to this page via back button
+    window.addEventListener('pageshow', function(event) {
+      const allButtons = document.querySelectorAll('.play-btn');
+      const status = document.getElementById('statusMessage');
+      const startBtn = document.getElementById('startNowBtn');
+
+      allButtons.forEach(function(btn) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        btn.style.transform = '';
+      });
+
+      if (startBtn) {
+        startBtn.disabled = false;
+        startBtn.style.opacity = '1';
+        startBtn.style.cursor = 'pointer';
+        startBtn.innerHTML = 'START NOW <span class="arrow">→</span>';
+      }
+
+      if (status) {
+        status.classList.remove('show');
+        status.textContent = 'Your selection has been received. Redirecting you to the next page...';
+      }
+    });
+  </script>
+</body>
+</html>
